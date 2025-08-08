@@ -7,14 +7,11 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 import { cn } from "@/lib/utils";
 import { UserMenu } from "./UserMenu";
-import { jwtDecode } from "jwt-decode";
+import { auth } from "@/utils/auth";
+import { toast } from "sonner";
 
 interface HeaderProps {
     className?: string;
-}
-
-interface UserPayload {
-    userId: string;
 }
 
 export const Header = ({ className }: HeaderProps) => {
@@ -24,18 +21,26 @@ export const Header = ({ className }: HeaderProps) => {
     const isLandingPage = pathname === "/";
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
+        const fetchUser = async () => {
             try {
-                const decoded = jwtDecode<UserPayload>(token);
-                setUser(decoded);
-                setIsLoading(false);
+                const data = await auth.getUserProfile();
+                if (data) {
+                    setUser(data);
+                    console.log(data);
+                } else {
+                    toast.error("Invalid user data");
+                    setUser(null);
+                }
             } catch (error) {
-                console.error("Invalid token", error);
+                toast.error("Error fetching user data");
                 setUser(null);
+            } finally {
+                setIsLoading(false);
             }
-        }
-    }, []);
+        };
+
+        fetchUser();
+    }, [pathname]);
 
     if (isLoading) {
         return null; // or a loading spinner
@@ -50,7 +55,7 @@ export const Header = ({ className }: HeaderProps) => {
         >
             <div className="mx-auto container flex flex-row h-16 items-center justify-between">
                 <Link
-                    href={user ? "/projects" : "/"}
+                    href={user ? "/todos" : "/"}
                     className="flex items-center space-x-2 font-bold text-xl hover:text-primary transition-colors"
                 >
                     I-DO

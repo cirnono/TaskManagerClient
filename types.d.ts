@@ -1,17 +1,23 @@
 interface ITodo {
-  id: string;
-  userId: Schema.Types.ObjectId;
-  content: string;
-  note?: string;
-  label?: Schema.Types.ObjectId; // 关联 Label
-  deadline?: Date;
-  completed: boolean;
-  completedAt?: Date;
-  order: number;
-  createdAt: Date;
-  updatedAt: Date;
+    id: string;
+    userId: Schema.Types.ObjectId;
+    content: string;
+    note?: string;
+    label?: Schema.Types.ObjectId; // 关联 Label
+    deadline?: Date;
+    completed: boolean;
+    completedAt?: Date;
+    order: number;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
+interface UserPayload {
+    userId: string;
+    username: string;
+    avatarUrl: string;
+    email: string;
+}
 // type Role = "read" | "write" | "admin" | "owner";
 // type InvitationStatus = "invited" | "accepted" | "declined" | "expired";
 

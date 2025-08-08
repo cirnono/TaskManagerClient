@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -11,37 +11,44 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Icons } from "@/components/Icons";
-import { toast } from "sonner";
 import Link from "next/link";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { auth } from "@/utils/auth";
+import { Icons } from "@/components/Icons";
 import { OAuthSignIn } from "@/components/OAuthSignIn";
 
-export function LoginForm() {
+export function CreateAccountForm() {
     const [isLoading, setIsLoading] = useState(false);
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const router = useRouter();
 
-    const handleSubmit = async (event: React.FormEvent) => {
+    const handleCreateAccount = async (
+        event: React.FormEvent<HTMLFormElement>
+    ) => {
         event.preventDefault();
+
+        if (password !== confirmPassword) {
+            toast.error("Validation Error", {
+                description: "Passwords do not match",
+            });
+            return;
+        }
 
         try {
             setIsLoading(true);
-            const data = await auth.signIn(email, password);
-            if (data && data._id) {
-                console.log("inside", data);
-                router.push("/todos");
-                router.refresh();
-            } else {
-                toast.error("Authentication Error", {
-                    description: "Invalid Credentials",
-                });
-            }
+            await auth.signUp(username, email, password);
+            toast.success("Success", {
+                description: "Your account is successfully registered.",
+            });
+
+            router.push("/todo");
         } catch (error) {
-            console.error("Auth error:", error);
-            toast.error("Authentication Error", {
+            toast.error("Account Creation Error", {
                 description: JSON.stringify(error),
             });
         } finally {
@@ -51,21 +58,34 @@ export function LoginForm() {
 
     return (
         <Card className="w-96">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleCreateAccount}>
                 <CardHeader className="space-y-1">
-                    <CardTitle className="text-2xl">Log in</CardTitle>
+                    <CardTitle className="text-2xl">
+                        Create an account
+                    </CardTitle>
                     <CardDescription className="text-xs">
-                        Welcome back
+                        Enter your email below to create your account
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
                     <div>
-                        Don&apos;t have an account?{" "}
-                        <Link href="/create-account" className="text-blue-500">
-                            Create account
+                        Already have an account?{" "}
+                        <Link href="/login" className="text-blue-500">
+                            Login
                         </Link>
                     </div>
-
+                    <div className="grid gap-2">
+                        <Label htmlFor="username">Username</Label>
+                        <Input
+                            id="username"
+                            type="username"
+                            placeholder="your name"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            disabled={isLoading}
+                            required
+                        />
+                    </div>
                     <div className="grid gap-2">
                         <Label htmlFor="email">Email</Label>
                         <Input
@@ -79,15 +99,7 @@ export function LoginForm() {
                         />
                     </div>
                     <div className="grid gap-2">
-                        <div className="flex items-center justify-between">
-                            <Label htmlFor="password">Password</Label>
-                            <Link
-                                href="/forgot-password"
-                                className="text-xs to-blue-500"
-                            >
-                                Forgot password?
-                            </Link>
-                        </div>
+                        <Label htmlFor="password">Password</Label>
                         <Input
                             id="password"
                             type="password"
@@ -97,12 +109,25 @@ export function LoginForm() {
                             required
                         />
                     </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="confirmPassword">
+                            Confirm Password
+                        </Label>
+                        <Input
+                            id="confirmPassword"
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            disabled={isLoading}
+                            required
+                        />
+                    </div>
 
                     <Button className="w-full" type="submit">
                         {isLoading && (
                             <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                         )}
-                        Sign In
+                        Create account
                     </Button>
                 </CardContent>
                 <CardFooter>

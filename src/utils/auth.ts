@@ -5,60 +5,34 @@ export type AuthError = {
 };
 
 export const auth = {
-    // async signUp(email: string, password: string) {
-    //     // check if the user already exist
-    //     const { data: existingUser, error: checkError } = await supabase
-    //         .from("users")
-    //         .select("id")
-    //         .eq("email", email)
-    //         .single();
-    //     // if exists, throw error. user already exists
-    //     if (existingUser) {
-    //         throw new Error(
-    //             "This email is already registered. Try signing in instead"
-    //         );
-    //     }
+    async signUp(username: string, email: string, password: string) {
+        const data = await request("http://localhost:3001/api/v1/users/", {
+            method: "POST",
+            body: JSON.stringify({ username, email, password }),
+        });
 
-    //     if (checkError && checkError.code !== "PGRST116") {
-    //         throw checkError;
-    //     }
+        console.log(data);
+        return data;
+    },
 
-    //     // if not, signup user
-    //     const { data, error: signUpError } = await supabase.auth.signUp({
-    //         email,
-    //         password,
-    //         options: {
-    //             emailRedirectTo: `${location.origin}/auth/callback`,
-    //         },
-    //     });
+    async verifyEmail(token: string) {
+        const data = await request(
+            "http://localhost:3001/api/v1/user/verify-email",
+            {
+                method: "POST",
+                body: JSON.stringify({ token }),
+            }
+        );
 
-    //     if (signUpError) {
-    //         throw new Error("Fail to create user account");
-    //     }
-
-    //     if (!data.user) {
-    //         throw new Error("Failed to create user account");
-    //     }
-
-    //     // save user detail
-    //     if (data.user.identities?.length === 0) {
-    //         try {
-    //             await users.captureUserDetails(data.user);
-    //         } catch (profileError) {
-    //             await supabase.auth.admin.deleteUser(data.user.id);
-    //             throw profileError;
-    //         }
-    //     }
-
-    //     return data;
-    // },
+        console.log(data);
+        return data;
+    },
 
     async signIn(email: string, password: string) {
         const data = await request("http://localhost:3001/api/v1/users/auth", {
             method: "POST",
             body: JSON.stringify({ email, password }),
         });
-        console.log(data);
 
         return data;
     },
@@ -67,51 +41,60 @@ export const auth = {
         // "https://accounts.google.com/o/oauth2/v2/auth";
     },
 
-    // async logout() {
-    //     const { error } = await supabase.auth.signOut();
-    //     if (error) throw { message: error.message, status: error.status };
-    // },
+    async logout() {
+        const data = await request(
+            "http://localhost:3001/api/v1/users/logout",
+            {
+                method: "POST",
+            }
+        );
+    },
 
-    // async resetPasswordRequest(email: string) {
-    //     const { data: user, error: userError } = await supabase
-    //         .from("users")
-    //         .select("id, provider")
-    //         .eq("email", email)
-    //         .single();
+    async getUserProfile() {
+        const data = await request(
+            "http://localhost:3001/api/v1/users/profile",
+            {
+                method: "GET",
+            }
+        );
+        return data;
+    },
 
-    //     if (userError && userError.code !== "PGRST116") {
-    //         throw userError;
-    //     }
+    async getEmailWithToken(token: string) {
+        const data = await request(
+            "http://localhost:3001/api/v1/users/reset-password",
+            {
+                method: "POST",
+                body: JSON.stringify({ token }),
+            }
+        );
 
-    //     // prevent email enumeration attacks
-    //     if (!user || user.provider !== "email") {
-    //         return {
-    //             success: true,
-    //             message:
-    //                 "If an account exists, a password reset link will be sent.",
-    //         };
-    //     }
+        console.log(data);
+        return data;
+    },
 
-    //     const resetLink = `${location.origin}/auth/reset-password`;
-    //     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    //         redirectTo: resetLink,
-    //     });
+    async resetPasswordRequest(email: string) {
+        const data = await request(
+            "http://localhost:3001/api/v1/users/reset-password",
+            {
+                method: "POST",
+                body: JSON.stringify({ email }),
+            }
+        );
 
-    //     if (error) throw error;
+        console.log(data);
+        return data;
+    },
 
-    //     return {
-    //         success: true,
-    //         message:
-    //             "If an account exists, a password reset link will be sent.",
-    //     };
-    // },
+    async resetPassword(newPassword: string, token: string) {
+        const data = await request(
+            "http://localhost:3001/api/v1/users/reset-password",
+            {
+                method: "PUT",
+                body: JSON.stringify({ newPassword, token }),
+            }
+        );
 
-    // async resetPassword(newPassword: string) {
-    //     const { data, error } = await supabase.auth.updateUser({
-    //         password: newPassword,
-    //     });
-    //     console.log(error);
-    //     if (error) throw { message: error.message, status: error.status };
-    //     return data;
-    // },
+        return data;
+    },
 };

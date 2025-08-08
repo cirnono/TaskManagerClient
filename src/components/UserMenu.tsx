@@ -18,7 +18,7 @@ import { auth } from "@/utils/auth";
 import { toast } from "sonner";
 
 interface Props {
-    user: User;
+    user: UserPayload;
 }
 
 export function UserMenu({ user }: Props) {
@@ -44,9 +44,9 @@ export function UserMenu({ user }: Props) {
                     size="icon"
                     className="relative h-9 w-9 rounded-full border bg-background"
                 >
-                    {user.user_metadata.avatar_url ? (
+                    {user.avatarUrl ? (
                         <Image
-                            src={user.user_metadata.avatar_url}
+                            src={user.avatarUrl}
                             alt={user.email || ""}
                             fill
                             className="rounded-full object-cover"
@@ -64,7 +64,7 @@ export function UserMenu({ user }: Props) {
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">
-                            {user.user_metadata.full_name || user.email}
+                            {user.username || user.email}
                         </p>
                         <p className="text-xs leading-none to-muted-foreground">
                             {user.email}
@@ -73,7 +73,7 @@ export function UserMenu({ user }: Props) {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
-                <DropdownMenuGroup>
+                {/* <DropdownMenuGroup>
                     <DropdownMenuItem asChild>
                         <Link href="/profile" className="w-full cursor-pointer">
                             <UserIcon className="mr-2 h-4 w-4" />
@@ -90,9 +90,9 @@ export function UserMenu({ user }: Props) {
                             <span>Projects</span>
                         </Link>
                     </DropdownMenuItem>
-                </DropdownMenuGroup>
+                </DropdownMenuGroup> */}
 
-                <DropdownMenuSeparator />
+                {/* <DropdownMenuSeparator />
 
                 <DropdownMenuItem asChild>
                     <Link href="/new-project" className="w-full cursor-pointer">
@@ -101,7 +101,7 @@ export function UserMenu({ user }: Props) {
                     </Link>
                 </DropdownMenuItem>
 
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator /> */}
 
                 <DropdownMenuItem
                     className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
