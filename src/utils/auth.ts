@@ -16,8 +16,9 @@ export const auth = {
     },
 
     async verifyEmail(token: string) {
+        console.log(token)
         const data = await request(
-            "http://localhost:3001/api/v1/user/verify-email",
+            "http://localhost:3001/api/v1/users/verify-email",
             {
                 method: "POST",
                 body: JSON.stringify({ token }),
@@ -62,7 +63,7 @@ export const auth = {
 
     async getEmailWithToken(token: string) {
         const data = await request(
-            "http://localhost:3001/api/v1/users/reset-password",
+            "http://localhost:3001/api/v1/users/email",
             {
                 method: "POST",
                 body: JSON.stringify({ token }),
@@ -87,6 +88,7 @@ export const auth = {
     },
 
     async resetPassword(newPassword: string, token: string) {
+        console.log(newPassword, token)
         const data = await request(
             "http://localhost:3001/api/v1/users/reset-password",
             {

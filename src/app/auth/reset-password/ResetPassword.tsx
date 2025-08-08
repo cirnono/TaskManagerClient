@@ -31,7 +31,7 @@ export default function ResetPasswordForm() {
             if (token) {
                 try {
                     const data = await auth.getEmailWithToken(token);
-                    setEmail(data);
+                    setEmail(data.email);
                     console.log(email);
                 } catch (error) {
                     toast.error("Error retriving profile", {
@@ -82,15 +82,20 @@ export default function ResetPasswordForm() {
             <form onSubmit={handleSubmit}>
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl">Reset password</CardTitle>
+                    <div className="grid gap-2">
+                        {/* 显示邮箱 */}
+                        {email ? (
+                            <Label>{email}</Label>
+                        ) : (
+                            <Label htmlFor="Retriving Email">Retriving Email</Label>
+                        )}
+                    </div>
                     <CardDescription className="text-xs">
                         Enter your new password
                     </CardDescription>
                 </CardHeader>
 
-                <CardContent className="grid gap-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="password">{email}</Label>
-                    </div>
+                <CardContent className="grid gap-4 pt-4">    
                     <div className="grid gap-2">
                         <Label htmlFor="password">New Password</Label>
                         <Input
